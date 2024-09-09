@@ -2,6 +2,13 @@ name = "abr-geocoder-workers"
 compatibility_date = "2024-09-08"
 compatibility_flags = [ "nodejs_compat" ]
 
+
+[[d1_databases]]
+binding = "DB"
+database_name = "abr-geocoder"
+database_id = "test"
+preview_database_id = "local-test-db"
+
 # [vars]
 # MY_VAR = "my-variable"
 
@@ -13,10 +20,6 @@ compatibility_flags = [ "nodejs_compat" ]
 # binding = "MY_BUCKET"
 # bucket_name = "my-bucket"
 
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "my-database"
-# database_id = ""
 
 # [ai]
 # binding = "AI"

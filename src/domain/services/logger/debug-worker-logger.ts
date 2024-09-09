@@ -21,30 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import {D1Database} from "@cloudflare/workers-types";
+import winston from 'winston';
+import path from 'node:path';
 
-export type DatabaseType = 'sqlite3';
+export class DebugWorkerLogger {
 
-export type Sqlite3Params = {
-  type: 'sqlite3',
-  dataDir: string;
-  schemaDir: string;
-};
+  private static instance: DebugWorkerLogger | undefined;
 
-export type MySqlParams = {
-  type: 'mysql',
-  host: string;
-  port: number;
-  username: string;
-  password: string;
-  schemaDir: string;
-};
+  static readonly getInstance = (): DebugWorkerLogger => {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new DebugWorkerLogger();
+    return this.instance;
+  }
 
-export type D1Params = {
-  type: 'd1',
-  d1Client: D1Database;
-};
-
-
-export type DatabaseParams = Sqlite3Params | MySqlParams | D1Params;
-
+  debug(message: string, ...meta: any[]) {
+    console.log("DEBUG", message, ...meta);
+  }
+  info(message: string, ...meta: any[]) {
+    console.log("INFO", message, ...meta);
+  }
+  warn(message: string, ...meta: any[]) {
+    console.log("WARN", message, ...meta);
+  }
+  data(message: string, ...meta: any[]) {
+    console.log("DATA", message, ...meta);
+  }
+  notice(message: string, ...meta: any[]) {
+    console.log("NOTICE", message, ...meta);
+  }
+}
