@@ -106,14 +106,27 @@ export class CommonDbGeocodeD1 implements ICommonDbGeocode {
     chome: string;
   }>): Promise<KoazaMachingInfo[]> {
     const conditions: string[] = [];
+    const parameters: (number | string)[] = [];
     if (where.city_key) {
-      conditions.push(`c.city_key = ?1`);
+      const index = conditions.length;
+      conditions[index] = `c.city_key = ?${index + 1}`;
+      parameters[index] = where.city_key;
+      //conditions.push(`c.city_key = ?1`);
     }
     if (where.oaza_cho) {
-      conditions.push(`t.${DataField.OAZA_CHO.dbColumn} = ?2`);
+      const index = conditions.length;
+      conditions[index] = `t.${DataField.OAZA_CHO.dbColumn} = ?${index + 1}`;
+      parameters[index] = where.oaza_cho;
+      //conditions.push(`t.${DataField.OAZA_CHO.dbColumn} = ?2`);
     }
     if (where.chome) {
-      conditions.push(`t.${DataField.CHOME.dbColumn} = ?3`);
+      const index = conditions.length;
+      conditions[index] = `t.${DataField.CHOME.dbColumn} = ?${index + 1}`;
+      parameters[index] = where.chome;
+      //conditions.push(`t.${DataField.CHOME.dbColumn} = ?3`);
+    }
+    if (conditions.length !== parameters.length) {
+      throw new Error('Invalid parameters');
     }
     const WHERE_CONDITION = conditions.join(' AND ');
     const stmt = this.d1Client.prepare(`
@@ -142,7 +155,7 @@ export class CommonDbGeocodeD1 implements ICommonDbGeocode {
         t.${DataField.KOAZA.dbColumn} != '' AND
         t.${DataField.KOAZA.dbColumn} IS NOT NULL AND
         ${WHERE_CONDITION}
-    `).bind(where.city_key, where.oaza_cho, where.chome);
+    `).bind(...parameters);
     const { results } = await stmt.all<KoazaMachingInfo>();
     return results;
   }
@@ -154,20 +167,36 @@ export class CommonDbGeocodeD1 implements ICommonDbGeocode {
     oaza_cho: string;
   }>): Promise<ChomeMachingInfo[]> {
     const conditions: string[] = [];
+    const parameters: (number | string)[] = [];
     if (where.pref_key) {
-      conditions.push(`c.pref_key = ?1`);
+      const index = conditions.length;
+      conditions[index] = `c.pref_key = ?${index + 1}`;
+      parameters[index] = where.pref_key;
+      //conditions.push(`c.pref_key = ?1`);
     }
     if (where.city_key) {
-      conditions.push(`c.city_key = ?2`);
+      const index = conditions.length;
+      conditions[index] = `c.city_key = ?${index + 1}`;
+      parameters[index] = where.city_key;
+     // conditions.push(`c.city_key = ?2`);
     }
     if (where.town_key) {
-      conditions.push(`t.town_key = ?3`);
+      const index = conditions.length;
+      conditions[index] = `t.town_key = ?${index + 1}`;
+      parameters[index] = where.town_key;
+      //conditions.push(`t.town_key = ?3`);
     }
     if (where.oaza_cho) {
-      conditions.push(`t.${DataField.OAZA_CHO.dbColumn} = ?4`);
+      const index = conditions.length;
+      conditions[index] = `t.${DataField.OAZA_CHO.dbColumn} = ?${index + 1}`;
+      parameters[index] = where.oaza_cho;
+      //conditions.push(`t.${DataField.OAZA_CHO.dbColumn} = ?4`);
     }
-    const WHERE_CONDITION = conditions.join(' AND ');
+    if (conditions.length !== parameters.length) {
+      throw new Error('Invalid parameters');
+    }
 
+    const WHERE_CONDITION = conditions.join(' AND ');
     const stmt = this.d1Client.prepare(`
       SELECT
         c.pref_key,
@@ -196,7 +225,7 @@ export class CommonDbGeocodeD1 implements ICommonDbGeocode {
         ${WHERE_CONDITION}
       GROUP BY
         c.pref_key, c.city_key, t.town_key, t.${DataField.CHOME.dbColumn}
-    `).bind(where.pref_key, where.city_key, where.town_key, where.oaza_cho);
+    `).bind(...parameters);
     const { results } = await stmt.all<ChomeMachingInfo>();
     return results;
   }
