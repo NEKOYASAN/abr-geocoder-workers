@@ -1,5 +1,5 @@
 {
-  "name": "@digital-go-jp/abr-geocoder",
+  "name": "@nekoyasan/abr-geocoder-workers",
   "version": "2.0.0",
   "description": "デジタル庁：アドレス・ベース・レジストリを用いたジオコーダー",
   "author": "Japan Digital Agency (デジタル庁)",
@@ -43,6 +43,7 @@
     "wrangler": "^3.75.0"
   },
   "dependencies": {
+    "@hono/node-server": "^1.12.2",
     "better-sqlite3": "^11.1.2",
     "buffer-crc32": "^1.0.0",
     "busboy": "^1.6.0",
