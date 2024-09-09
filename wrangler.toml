@@ -10,18 +10,3 @@ binding = "DB"
 database_name = "abr-geocoder"
 database_id = "2f24283c-352c-488f-af77-4bfcc07a0775"
 preview_database_id = "local-test-db"
-
-# [vars]
-# MY_VAR = "my-variable"
-
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
-
-
-# [ai]
-# binding = "AI"

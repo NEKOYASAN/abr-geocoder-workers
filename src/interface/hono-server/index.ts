@@ -40,8 +40,6 @@ export const app = new Hono<{
   }
 }>()
 
-let geocoder: AbrGeocoder;
-
 app.use(cors())
 app.use(poweredBy())
 
