@@ -23,21 +23,14 @@
  * SOFTWARE.
  */
 import { DatabaseParams } from "@domain/types/database-params";
-import path from "node:path";
-import { ICommonDbDownload, IParcelDbDownload, IRsdtBlkDbDownload, IRsdtDspDbDownload } from "./common-db";
-import { CommonDbDownloadSqlite3 } from "./sqlite3/download/common-db-download-sqlite3";
-import { ParcelDbDownloadSqlite3 } from "./sqlite3/download/parcel-db-download-sqlite3";
-import { RsdtBlkDbDownloadSqlite3 } from "./sqlite3/download/rsdt-blk-db-download-sqlite3";
-import { RsdtDspDownloadSqlite3 } from "./sqlite3/download/rsdt-dsp-db-sqlite3";
-import { Sqlite3Util } from "./sqlite3/sqlite3-util";
+import { ICommonDbDownload, IParcelDbDownload, IRsdtBlkDbDownload, IRsdtDspDbDownload } from "../common-db";
 import type {D1Database} from "@cloudflare/workers-types";
 import {CommonDbDownloadD1} from "@interface/database/D1/download/common-db-download-d1";
 import {RsdtBlkDbDownloadD1} from "@interface/database/D1/download/rsdt-blk-db-download-d1";
 import {RsdtDspDownloadD1} from "@interface/database/D1/download/rsdt-dsp-db-d1";
 import {ParcelDbDownloadD1} from "@interface/database/D1/download/parcel-db-download-d1";
 
-export class DownloadDbController {
-  private readonly sqlite3Util?: Sqlite3Util;
+export class DownloadWorkerD1Controller {
   private readonly d1Client?: D1Database;
   public readonly connectParams: DatabaseParams;
 
@@ -47,11 +40,6 @@ export class DownloadDbController {
     this.connectParams = params.connectParams;
 
     switch (this.connectParams.type) {
-      case 'sqlite3':
-        this.sqlite3Util = new Sqlite3Util({
-          dataDir: this.connectParams.dataDir,
-        });
-        break;
 
       case 'd1':
         this.d1Client = this.connectParams.d1Client;
@@ -65,13 +53,6 @@ export class DownloadDbController {
 
   async openCommonDb(): Promise<ICommonDbDownload> {
     switch(this.connectParams.type) {
-      case 'sqlite3':
-        return new CommonDbDownloadSqlite3({
-          sqliteFilePath: path.join(this.connectParams.dataDir, 'common.sqlite'),
-          schemaFilePath: path.join(this.connectParams.schemaDir, 'schema-common.sql'),
-          readonly: false,
-        });
-
       case "d1":
         if (!this.d1Client) {
           throw 'D1 client is not initialized';
@@ -88,20 +69,6 @@ export class DownloadDbController {
     createIfNotExists: boolean;
   }>): Promise<IRsdtBlkDbDownload | null> {
     switch(this.connectParams.type) {
-      case 'sqlite3':
-        const hasTheDbFile = this.sqlite3Util?.hasExtraDb({
-          lg_code: params.lg_code,
-        });
-        if (!hasTheDbFile && !params.createIfNotExists) {
-          return null;
-        }
-
-        return new RsdtBlkDbDownloadSqlite3({
-          sqliteFilePath: path.join(this.connectParams.dataDir, `abrg-${params.lg_code}.sqlite`),
-          schemaFilePath: path.join(this.connectParams.schemaDir, 'schema-lgcode.sql'),
-          readonly: false,
-        });
-
       case "d1":
         if (!this.d1Client) {
           throw 'D1 client is not initialized';
@@ -118,20 +85,6 @@ export class DownloadDbController {
     createIfNotExists: boolean;
   }>): Promise<IRsdtDspDbDownload | null> {
     switch (this.connectParams.type) {
-      case 'sqlite3':
-        const hasTheDbFile = this.sqlite3Util?.hasExtraDb({
-          lg_code: params.lg_code,
-        });
-        if (!hasTheDbFile && !params.createIfNotExists) {
-          return null;
-        }
-
-        return new RsdtDspDownloadSqlite3({
-          sqliteFilePath: path.join(this.connectParams.dataDir, `abrg-${params.lg_code}.sqlite`),
-          schemaFilePath: path.join(this.connectParams.schemaDir, 'schema-lgcode.sql'),
-          readonly: false,
-        });
-
       case "d1":
         if (!this.d1Client) {
           throw 'D1 client is not initialized';
@@ -147,19 +100,6 @@ export class DownloadDbController {
     createIfNotExists: boolean;
   }>): Promise<IParcelDbDownload | null> {
     switch (this.connectParams.type) {
-      case 'sqlite3':
-        const hasTheDbFile = this.sqlite3Util?.hasExtraDb({
-          lg_code: params.lg_code,
-        });
-        if (!hasTheDbFile && !params.createIfNotExists) {
-          return null;
-        }
-
-        return new ParcelDbDownloadSqlite3({
-          sqliteFilePath: path.join(this.connectParams.dataDir, `abrg-${params.lg_code}.sqlite`),
-          schemaFilePath: path.join(this.connectParams.schemaDir, 'schema-lgcode.sql'),
-          readonly: false,
-        });
 
       case "d1":
         if (!this.d1Client) {
