@@ -137,7 +137,6 @@ export const parcelTransform = async (dbCtrl: GeocodeWorkerD1Controller, queries
             // もし lgCode がなければスキップする
             continue;
         }
-
         // city_key, town_key で指定した地番情報を取得
         const findResults = await db.getParcelRows({
             prc_id: searchInfo.parcel_key,
@@ -148,6 +147,8 @@ export const parcelTransform = async (dbCtrl: GeocodeWorkerD1Controller, queries
                 machiaza_id: query.machiaza_id,
                 lg_code: query.lg_code,
             })
+        }).catch((e) => {
+            return [];
         });
 
         // 見つからなかった

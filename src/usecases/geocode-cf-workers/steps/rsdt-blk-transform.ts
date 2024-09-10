@@ -189,6 +189,8 @@ export const rsdtBlkTransform = async (dbCtrl: GeocodeWorkerD1Controller, querie
         const findResults = await db.getBlockNumRows({
             town_key: query.town_key,
             blk_num: queryInfo.block_num,
+        }).catch((e) => {
+            return [];
         });
 
         // 番地が見つからなかった

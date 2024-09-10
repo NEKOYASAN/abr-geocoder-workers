@@ -51,7 +51,7 @@ export class ParcelDbGeocodeD1 implements IParcelDbGeocode {
     where.town_key = where.town_key || null;
     const stmt = this.d1Client.prepare(`
         SELECT
-          parcel_key,
+          parcel_${this.lg_code}_key,
           ${DataField.PRC_ID.dbColumn} as prc_id,
           ${DataField.PRC_NUM1.dbColumn} as prc_num1,
           ${DataField.PRC_NUM2.dbColumn} as prc_num2,
