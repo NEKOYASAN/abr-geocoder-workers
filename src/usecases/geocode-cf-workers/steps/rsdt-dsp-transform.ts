@@ -73,7 +73,12 @@ export const rsdtDspTransform = async (dbCtrl: GeocodeWorkerD1Controller, querie
         }
         const rows = await db.getRsdtDspRows({
             rsdtblk_key: query.rsdtblk_key!,
+        }).catch((e) => {
+            return [];
         });
+        if (rows.length === 0) {
+            continue;
+        }
 
         for (const row of rows) {
             const key = [row.rsdt_num, row.rsdt_num2].filter(x => x !== null).join(DASH);
